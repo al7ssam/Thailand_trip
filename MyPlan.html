@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-key="headerTitle">Thailand Trip</title>
+  <!-- Preconnect for Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Using Inter font (modern) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Global Variables for Dark Mode (default) */
+    :root {
+      --bg-color: #1E1E2F;
+      --card-bg: #27293D;
+      --primary-text: #ffffff;
+      --accent-color: #00BCD4;
+      --secondary-text: #B0BEC5;
+      --header-bg: rgba(0, 0, 0, 0.9);
+      --header-text: #ffffff;
+      --shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      --transition-speed: 0.3s;
+      --header-height: 70px;
+      --font-family: 'Inter', sans-serif;
+      --card-font-size: 1.1rem; /* زيادة حجم الخط لتفاصيل الرحلات */
+    }
+    
+    /* Light Mode Variables */
+    .light-mode {
+      --bg-color: #f5f5f5;
+      --card-bg: #ffffff;
+      --primary-text: #333;
+      --accent-color: #007BFF;
+      --secondary-text: #666;
+      --header-bg: rgba(255, 255, 255, 0.95);
+      --header-text: #333;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    /* Light mode override for Hero Section background */
+    .light-mode .hero {
+      background: var(--accent-color);
+    }
+    
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-color);
+      color: var(--primary-text);
+      line-height: 1.6;
+    }
+    a {
+      text-decoration: none;
+      color: var(--accent-color);
+      transition: color var(--transition-speed);
+    }
+    a:hover {
+      color: #0056b3;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--header-height);
+      background: var(--header-bg);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--header-text);
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+    }
+    .lang-switcher button, .theme-toggle button {
+      background: transparent;
+      border: 2px solid var(--accent-color);
+      color: var(--accent-color);
+      padding: 5px 12px;
+      margin-left: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background var(--transition-speed), color var(--transition-speed);
+    }
+    .lang-switcher button:hover, .theme-toggle button:hover {
+      background: var(--accent-color);
+      color: var(--bg-color);
+    }
+    
+    /* Main Container */
+    .container {
+      padding: calc(var(--header-height) + 20px) 20px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* Hero Section (Main Text Card) */
+    .hero {
+      position: relative;
+      /* تقصير الارتفاع إلى 40vh بدلاً من 60vh */
+      height: 40vh;
+      background: url('https://source.unsplash.com/1600x900/?thailand,travel') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      /* في الوضع الداكن يبقى التراكب أسود شفاف، وفي الوضع الفاتح (عبر override) الخلفية تغير */
+      background: rgba(0,0,0,0.4);
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      text-align: center;
+      color: #fff;
+      z-index: 2;
+      animation: fadeInUp 1s ease-out;
+    }
+    .hero-content h2 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+    .hero-content p {
+      font-size: 1.2rem;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Section Titles */
+    .section-title {
+      font-size: 2rem;
+      margin: 40px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--accent-color);
+      display: inline-block;
+    }
+    
+    /* Cards Grid */
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 600px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (min-width: 900px) {
+      .cards {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+    }
+    .card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      color: var(--accent-color);
+    }
+    .card p, .card li {
+      font-size: var(--card-font-size);
+      margin-bottom: 8px;
+    }
+    .card ul {
+      list-style: disc;
+      padding-left: 20px;
+      margin-bottom: 10px;
+    }
+    
+    /* Transportation Section */
+    .transportation {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 40px;
+      box-shadow: var(--shadow);
+    }
+    .transportation h3 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      color: var(--accent-color);
+    }
+    .transportation ul {
+      list-style: none;
+      padding: 0;
+    }
+    .transportation ul li {
+      margin-bottom: 10px;
+      font-size: var(--card-font-size);
+    }
+    
+    /* Back to Top Button */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--accent-color);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--transition-speed), visibility var(--transition-speed);
+      z-index: 1001;
+    }
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Language and Theme Toggle -->
+  <header>
+    <h1 data-key="headerTitle">Thailand Trip</h1>
+    <div class="controls">
+      <div class="lang-switcher">
+        <button onclick="setLanguage('ar')">عربي</button>
+        <button onclick="setLanguage('en')">English</button>
+      </div>
+      <div class="theme-toggle">
+        <button onclick="toggleTheme()">Toggle Theme</button>
+      </div>
+    </div>
+  </header>
+  
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h2 data-key="heroTitle">Hussam's Thailand Trip</h2>
+        <p data-key="heroSubtitle">My Personal Plan 13 April - 12 May</p>
+      </div>
+    </section>
+    
+    <!-- Bangkok Section -->
+    <section>
+      <h2 class="section-title" data-key="bangkokSectionTitle">Bangkok</h2>
+      <p>
+        <span data-key="bangkokDates">📅 April 13 - 15, 2025</span><br>
+        <span data-key="bangkokArrival">✈️ Arrival: April 13, 1:00 PM</span>
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h3 data-key="bangkokDay1Title">Day 1 (April 13)</h3>
+          <p data-key="bangkokDay1Text">Arrival and Initial Exploration</p>
+          <ul>
+            <li data-key="bangkokDay1Item1">🚖 Check into hotel and rest until the afternoon</li>
+            <li data-key="bangkokDay1Item2">🚶‍♂️ Walk around the Siam area and shop at Siam Paragon</li>
+            <li data-key="bangkokDay1Item3">🌃 Experience nightlife on Khao San Road</li>
+          </ul>
+          <p data-key="bangkokDay1Accommodation">Accommodation: Sukhumvit or Siam area</p>
+        </div>
+        <div class="card">
+          <h3 data-key="bangkokDay2Title">Day 2 (April 14)</h3>
+          <p data-key="bangkokDay2Text">Cultural Landmarks</p>
+          <ul>
+            <li data-key="bangkokDay2Item1">🏯 Visit the Grand Palace and Wat Phra Kaew</li>
+            <li data-key="bangkokDay2Item2">⛩️ Explore Wat Arun</li>
+            <li data-key="bangkokDay2Item3">🚤 Boat tour through the canals</li>
+            <li data-key="bangkokDay2Item4">🛍️ Visit Chatuchak Market (if on Saturday or Sunday)</li>
+            <li data-key="bangkokDay2Item5">🍽️ Dinner at Asiatique The Riverfront</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="bangkokDay3Title">Day 3 (April 15)</h3>
+          <p data-key="bangkokDay3Text">Markets and Local Experience</p>
+          <ul>
+            <li data-key="bangkokDay3Item1">🛶 Visit Damnoen Saduak Floating Market in the morning</li>
+            <li data-key="bangkokDay3Item2">🌆 Visit Maeklong Railway Market</li>
+            <li data-key="bangkokDay3Item3">🛍️ Tour the Talad Rot Fai Night Market</li>
+          </ul>
+          <p data-key="bangkokDay3Travel">🚆 Travel to Ayutthaya by train (1.5 hours) in the evening</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Ayutthaya Section -->
+    <section>
+      <h2 class="section-title" data-key="ayutthayaSectionTitle">Ayutthaya</h2>
+      <p>
+        <span data-key="ayutthayaDate">📅 April 16, 2025</span><br>
+        <span data-key="ayutthayaAccommodation">Accommodation: One night near the historical park</span>
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h3 data-key="ayutthayaCardTitle">One Day</h3>
+          <ul>
+            <li data-key="ayutthayaItem1">🚴‍♂️ Explore Ayutthaya Historical Park by bicycle</li>
+            <li data-key="ayutthayaItem2">🏯 Visit Wat Mahathat to see Buddha's head entwined in tree roots</li>
+            <li data-key="ayutthayaItem3">🏯 Visit Wat Chaiwatthanaram at sunset</li>
+            <li data-key="ayutthayaItem4">🚤 Boat tour around temples at sunset</li>
+          </ul>
+          <p data-key="ayutthayaTravel">🚌 Travel to Sukhothai by bus (6 hours) on the morning of April 17</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Sukhothai Section -->
+    <section>
+      <h2 class="section-title" data-key="sukhothaiSectionTitle">Sukhothai</h2>
+      <p>
+        <span data-key="sukhothaiDate">📅 April 17-18, 2025</span><br>
+        <span data-key="sukhothaiAccommodation">Accommodation: Near the historical park</span>
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h3 data-key="sukhothaiDay5Title">Day 5 (April 17)</h3>
+          <ul>
+            <li data-key="sukhothaiDay5Item1">🚴‍♂️ Bicycle tour of Sukhothai Historical Park</li>
+            <li data-key="sukhothaiDay5Item2">🏛️ Visit Wat Si Chum to see the giant Buddha</li>
+            <li data-key="sukhothaiDay5Item3">🏯 Explore ancient temples such as Wat Mahathat</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="sukhothaiDay6Title">Day 6 (April 18)</h3>
+          <ul>
+            <li data-key="sukhothaiDay6Item1">🚙 Tour nearby villages</li>
+            <li data-key="sukhothaiDay6Item2">🍽️ Experience local food at Sukhothai Market</li>
+          </ul>
+          <p data-key="sukhothaiTravel">✈️ Fly to Chiang Rai from Phitsanulok in the evening</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Chiang Rai Section -->
+    <section>
+      <h2 class="section-title" data-key="chiangRaiSectionTitle">Chiang Rai</h2>
+      <p>
+        <span data-key="chiangRaiDate">📅 April 19-21, 2025</span><br>
+        <span data-key="chiangRaiAccommodation">Accommodation: In the city center</span>
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h3 data-key="chiangRaiDay7Title">Day 7 (April 19)</h3>
+          <ul>
+            <li data-key="chiangRaiDay7Item1">🏯 Visit the White Temple (Wat Rong Khun)</li>
+            <li data-key="chiangRaiDay7Item2">🔵 Explore the Blue Temple (Wat Rong Suea Ten)</li>
+            <li data-key="chiangRaiDay7Item3">🏔️ Tour Mae Fah Luang Art & Culture Park</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="chiangRaiDay8Title">Day 8 (April 20)</h3>
+          <ul>
+            <li data-key="chiangRaiDay8Item1">🚙 Trip to the Golden Triangle</li>
+            <li data-key="chiangRaiDay8Item2">🍵 Visit tea plantations in Mae Salong</li>
+            <li data-key="chiangRaiDay8Item3">🌊 Walk at Khun Korn Waterfall</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="chiangRaiDay9Title">Day 9 (April 21)</h3>
+          <ul>
+            <li data-key="chiangRaiDay9Item1">🛍️ Visit Chiang Rai Night Bazaar</li>
+            <li data-key="chiangRaiDay9Item2">🏯 Tour Wat Huay Pla Kang</li>
+          </ul>
+          <p data-key="chiangRaiTravel">🚌 Travel to Pai by bus via Chiang Mai on the morning of April 22</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Pai Section -->
+    <section>
+      <h2 class="section-title" data-key="paiSectionTitle">Pai</h2>
+      <p>
+        <span data-key="paiDate">📅 April 22-24, 2025</span><br>
+        <span data-key="paiAccommodation">Accommodation: Nature cabins or near Pai River</span>
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h3 data-key="paiDay10Title">Day 10 (April 22)</h3>
+          <ul>
+            <li data-key="paiDay10Item1">🌿 Visit Pai hot springs</li>
+            <li data-key="paiDay10Item2">🚶‍♂️ Hike Pai Canyon at sunset</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="paiDay11Title">Day 11 (April 23)</h3>
+          <ul>
+            <li data-key="paiDay11Item1">🏍️ Motorbike tour of mountain villages</li>
+            <li data-key="paiDay11Item2">💦 Visit Mo Paeng Waterfall</li>
+            <li data-key="paiDay11Item3">🌅 Enjoy the view at Yun Lai Viewpoint</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="paiDay12Title">Day 12 (April 24)</h3>
+          <ul>
+            <li data-key="paiDay12Item1">🏯 Visit Santichon Village (Chinese Temple)</li>
+            <li data-key="paiDay12Item2">🚤 Boat ride on the river</li>
+          </ul>
+          <p data-key="paiTravel">🚌 Bus to Chiang Mai on the morning of April 25 (3 hours)</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Chiang Mai Section -->
+    <section>
+      <h2 class="section-title" data-key="chiangMaiSectionTitle">Chiang Mai</h2>
+      <p>
+        <span data-key="chiangMaiDate">📅 April 25-28, 2025</span><br>
+        <span data-key="chiangMaiAccommodation">Accommodation: In the old town or Nimmanhaemin area</span>
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h3 data-key="chiangMaiDay13Title">Day 13 (April 25)</h3>
+          <ul>
+            <li data-key="chiangMaiDay13Item1">🏛️ Visit Wat Phra Singh and Wat Chedi Luang</li>
+            <li data-key="chiangMaiDay13Item2">🚶‍♂️ Stroll through the old town and markets</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="chiangMaiDay14Title">Day 14 (April 26)</h3>
+          <ul>
+            <li data-key="chiangMaiDay14Item1">🏔️ Visit Wat Phra That Doi Suthep</li>
+            <li data-key="chiangMaiDay14Item2">🌲 Walk in Doi Inthanon National Park</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="chiangMaiDay15Title">Day 15 (April 27)</h3>
+          <ul>
+            <li data-key="chiangMaiDay15Item1">🐘 Visit Elephant Nature Park</li>
+            <li data-key="chiangMaiDay15Item2">🍜 Take a Thai cooking class</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="chiangMaiDay16Title">Day 16 (April 28)</h3>
+          <ul>
+            <li data-key="chiangMaiDay16Item1">🛍️ Final shopping tour</li>
+            <li data-key="chiangMaiDay16Item2">☕ Experience trendy cafes in Nimmanhaemin</li>
+          </ul>
+          <p data-key="chiangMaiDeparture">✈️ Departure from Chiang Mai to Bangkok (according to schedule)</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Relaxation in Chiang Mai Section -->
+    <section>
+      <h2 class="section-title" data-key="relaxationSectionTitle">Relaxation in Chiang Mai</h2>
+      <p data-key="relaxationDate">📅 April 29-30, 2025</p>
+      <div class="cards">
+        <div class="card">
+          <h3 data-key="relaxationDay29Title">April 29</h3>
+          <ul>
+            <li data-key="relaxationDay29Item1">Relax at a luxurious resort</li>
+            <li data-key="relaxationDay29Item2">Visit spa centers and natural treatment facilities</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="relaxationDay30Title">April 30</h3>
+          <ul>
+            <li data-key="relaxationDay30Item1">Explore trendy cafes</li>
+            <li data-key="relaxationDay30Item2">Stroll in quiet historical areas</li>
+            <li data-key="relaxationDay30Item3">Spend time relaxing in gardens</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Volunteer Work Section (بدون قسم تفاصيل المشروع التطوعي) -->
+    <section>
+      <h2 class="section-title" data-key="volunteerSectionTitle">Volunteer Work</h2>
+      <p data-key="volunteerDate">📅 May 1-12, 2025</p>
+      <div class="cards">
+        <div class="card">
+          <h3 data-key="volunteerPhase1Title">Phase One (May 1-6)</h3>
+          <ul>
+            <li data-key="volunteerPhase1Item1">Participate in environmental initiatives and area cleaning</li>
+            <li data-key="volunteerPhase1Item2">Support social projects and boost social media</li>
+            <li data-key="volunteerPhase1Item3">Workshops in handicrafts and Thai cooking lessons</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-key="volunteerPhase2Title">Phase Two (May 7-12)</h3>
+          <ul>
+            <li data-key="volunteerPhase2Item1">Assist in art projects and language exchange with children</li>
+            <li data-key="volunteerPhase2Item2">Photograph and promote handicraft products through videos</li>
+            <li data-key="volunteerPhase2Item3">Participate in daily activities like cleaning and maintenance</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Transportation Summary Section -->
+    <section class="transportation">
+      <h3 data-key="transportationTitle">Trip Summary 🚗</h3>
+      <ul>
+        <li data-key="transportationItem1">🚆 Bangkok - Ayutthaya (Train)</li>
+        <li data-key="transportationItem2">🚌 Ayutthaya - Sukhothai (Bus)</li>
+        <li data-key="transportationItem3">✈️ Sukhothai - Chiang Rai (Flight from Phitsanulok)</li>
+        <li data-key="transportationItem4">🚌 Chiang Rai - Pai (Bus via Chiang Mai)</li>
+        <li data-key="transportationItem5">🚌 Pai - Chiang Mai (Bus)</li>
+        <li data-key="transportationItem6">✈️ Chiang Mai - Bangkok (Flight)</li>
+      </ul>
+    </section>
+  </div>
+  
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to Top">&#8679;</button>
+  
+  <script>
+    // Translation Object for Arabic and English
+    const translations = {
+      ar: {
+        headerTitle: "رحلة تايلاند",
+        heroTitle: "مسار رحلة السفر الى تايلاند",
+        heroSubtitle: "الخطة الشخصية من 13 ابريل حتى 12 مايو",
+        bangkokSectionTitle: "بانكوك",
+        bangkokDates: "📅 13 - 15 أبريل 2025",
+        bangkokArrival: "✈️ الوصول: 13 أبريل الساعة 1 ظهرًا",
+        bangkokDay1Title: "اليوم 1 (13 أبريل)",
+        bangkokDay1Text: "الوصول واستكشاف أولي",
+        bangkokDay1Item1: "🚖 التوجه إلى الفندق والاستراحة حتى العصر",
+        bangkokDay1Item2: "🚶‍♂️ المشي في منطقة Siam والتسوق في Siam Paragon",
+        bangkokDay1Item3: "🌃 تجربة الحياة الليلية في كاو سان رود",
+        bangkokDay1Accommodation: "الإقامة: في منطقة سوكومفيت أو سيام",
+        bangkokDay2Title: "اليوم 2 (14 أبريل)",
+        bangkokDay2Text: "المعالم الثقافية",
+        bangkokDay2Item1: "🏯 زيارة القصر الكبير ووات فرا كاو",
+        bangkokDay2Item2: "⛩️ استكشاف معبد وات أرون",
+        bangkokDay2Item3: "🚤 جولة بالقارب في القنوات المائية",
+        bangkokDay2Item4: "🛍️ زيارة سوق تشاتوشاك (إذا كان يوم السبت أو الأحد)",
+        bangkokDay2Item5: "🍽️ العشاء في Asiatique The Riverfront",
+        bangkokDay3Title: "اليوم 3 (15 أبريل)",
+        bangkokDay3Text: "الأسواق والتجربة المحلية",
+        bangkokDay3Item1: "🛶 زيارة السوق العائم دامنوين سادواك صباحًا",
+        bangkokDay3Item2: "🌆 زيارة سوق القطارات في مايك لونغ",
+        bangkokDay3Item3: "🛍️ جولة في سوق Talad Rot Fai الليلي",
+        bangkokDay3Travel: "🚆 الانتقال إلى أيوثايا بالقطار (1.5 ساعة) مساءً",
+        
+        ayutthayaSectionTitle: "أيوثايا",
+        ayutthayaDate: "📅 16 أبريل 2025",
+        ayutthayaAccommodation: "الإقامة: ليلة واحدة بالقرب من الحديقة التاريخية",
+        ayutthayaCardTitle: "يوم واحد",
+        ayutthayaItem1: "🚴‍♂️ استكشاف حديقة أيوثايا التاريخية بالدراجة",
+        ayutthayaItem2: "🏯 زيارة Wat Mahathat لرؤية رأس بوذا بين جذور الأشجار",
+        ayutthayaItem3: "🏯 زيارة Wat Chaiwatthanaram عند الغروب",
+        ayutthayaItem4: "🚤 جولة بالقارب حول المعابد عند غروب الشمس",
+        ayutthayaTravel: "🚌 الانتقال إلى سوكوثاي صباح يوم 17 أبريل بالحافلة (6 ساعات)",
+        
+        sukhothaiSectionTitle: "سوكوثاي",
+        sukhothaiDate: "📅 17 - 18 أبريل 2025",
+        sukhothaiAccommodation: "الإقامة: بالقرب من الحديقة التاريخية",
+        sukhothaiDay5Title: "اليوم 5 (17 أبريل)",
+        sukhothaiDay5Item1: "🚴‍♂️ ركوب الدراجة في حديقة سوكوثاي التاريخية",
+        sukhothaiDay5Item2: "🏛️ زيارة Wat Si Chum لمشاهدة بوذا الضخم",
+        sukhothaiDay5Item3: "🏯 استكشاف المعابد القديمة مثل Wat Mahathat",
+        sukhothaiDay6Title: "اليوم 6 (18 أبريل)",
+        sukhothaiDay6Item1: "🚙 جولة في القرى القريبة",
+        sukhothaiDay6Item2: "🍽️ تجربة الطعام المحلي في سوق سوكوثاي",
+        sukhothaiTravel: "✈️ الانتقال إلى شيانغ راي بالطيران (من فيتسانولوك) مساءً",
+        
+        chiangRaiSectionTitle: "شيانغ راي",
+        chiangRaiDate: "📅 19 - 21 أبريل 2025",
+        chiangRaiAccommodation: "الإقامة: في وسط المدينة",
+        chiangRaiDay7Title: "اليوم 7 (19 أبريل)",
+        chiangRaiDay7Item1: "🏯 زيارة المعبد الأبيض (Wat Rong Khun)",
+        chiangRaiDay7Item2: "🔵 استكشاف المعبد الأزرق (Wat Rong Suea Ten)",
+        chiangRaiDay7Item3: "🏔️ جولة إلى Mae Fah Luang Art & Culture Park",
+        chiangRaiDay8Title: "اليوم 8 (20 أبريل)",
+        chiangRaiDay8Item1: "🚙 رحلة إلى المثلث الذهبي",
+        chiangRaiDay8Item2: "🍵 زيارة مزارع الشاي في Mae Salong",
+        chiangRaiDay8Item3: "🌊 التنزه في Khun Korn Waterfall",
+        chiangRaiDay9Title: "اليوم 9 (21 أبريل)",
+        chiangRaiDay9Item1: "🛍️ زيارة Chiang Rai Night Bazaar",
+        chiangRaiDay9Item2: "🏯 جولة في معبد Wat Huay Pla Kang",
+        chiangRaiTravel: "🚌 الانتقال إلى باي بالحافلة عبر شيانغ ماي صباح يوم 22 أبريل",
+        
+        paiSectionTitle: "باي",
+        paiDate: "📅 22 - 24 أبريل 2025",
+        paiAccommodation: "الإقامة: أكواخ في الطبيعة أو بالقرب من نهر باي",
+        paiDay10Title: "اليوم 10 (22 أبريل)",
+        paiDay10Item1: "🌿 زيارة ينابيع باي الساخنة",
+        paiDay10Item2: "🚶‍♂️ التنزه في Pai Canyon عند الغروب",
+        paiDay11Title: "اليوم 11 (23 أبريل)",
+        paiDay11Item1: "🏍️ جولة بالدراجة النارية في القرى الجبلية",
+        paiDay11Item2: "💦 زيارة شلال Mo Paeng Waterfall",
+        paiDay11Item3: "🌅 الاستمتاع بإطلالة Yun Lai Viewpoint",
+        paiDay12Title: "اليوم 12 (24 أبريل)",
+        paiDay12Item1: "🏯 زيارة المعبد الصيني Santichon Village",
+        paiDay12Item2: "🚤 تجربة ركوب القوارب في النهر",
+        paiTravel: "🚌 الانتقال إلى شيانغ ماي بالحافلة صباح 25 أبريل (3 ساعات)",
+        
+        chiangMaiSectionTitle: "شيانغ ماي",
+        chiangMaiDate: "📅 25 - 28 أبريل 2025",
+        chiangMaiAccommodation: "الإقامة: في البلدة القديمة أو منطقة نيمانهايمين",
+        chiangMaiDay13Title: "اليوم 13 (25 أبريل)",
+        chiangMaiDay13Item1: "🏛️ زيارة معابد Wat Phra Singh وWat Chedi Luang",
+        chiangMaiDay13Item2: "🚶‍♂️ التجول في البلدة القديمة والأسواق",
+        chiangMaiDay14Title: "اليوم 14 (26 أبريل)",
+        chiangMaiDay14Item1: "🏔️ زيارة Wat Phra That Doi Suthep",
+        chiangMaiDay14Item2: "🌲 التنزه في Doi Inthanon National Park",
+        chiangMaiDay15Title: "اليوم 15 (27 أبريل)",
+        chiangMaiDay15Item1: "🐘 زيارة Elephant Nature Park",
+        chiangMaiDay15Item2: "🍜 أخذ درس طبخ تايلاندي",
+        chiangMaiDay16Title: "اليوم 16 (28 أبريل)",
+        chiangMaiDay16Item1: "🛍️ جولة تسوق أخيرة",
+        chiangMaiDay16Item2: "☕ تجربة المقاهي العصرية في نيمانهايمين",
+        chiangMaiDeparture: "✈️ المغادرة من شيانغ ماي إلى بانكوك (حسب موعد الرحلة)",
+        
+        relaxationSectionTitle: "راحة واستجمام في شيانغ ماي",
+        relaxationDate: "📅 29 - 30 أبريل 2025",
+        relaxationDay29Title: "29 أبريل",
+        relaxationDay29Item1: "الاسترخاء في منتجع فاخر",
+        relaxationDay29Item2: "زيارة مراكز السبا والعلاجات الطبيعية",
+        relaxationDay30Title: "30 أبريل",
+        relaxationDay30Item1: "استكشاف المقاهي العصرية",
+        relaxationDay30Item2: "تمشية في المناطق التاريخية الهادئة",
+        relaxationDay30Item3: "قضاء وقت للاسترخاء في الحدائق",
+        
+        volunteerSectionTitle: "عمل تطوعي",
+        volunteerDate: "📅 1 - 12 مايو 2025",
+        volunteerPhase1Title: "المرحلة الأولى (1 - 6 مايو)",
+        volunteerPhase1Item1: "المشاركة في مبادرات بيئية وتنظيف المناطق",
+        volunteerPhase1Item2: "دعم المشاريع الاجتماعية وتنشيط وسائل التواصل",
+        volunteerPhase1Item3: "ورش عمل في الفنون الحرفية وتعليم الطبخ التايلاندي",
+        volunteerPhase2Title: "المرحلة الثانية (7 - 12 مايو)",
+        volunteerPhase2Item1: "المساعدة في المشاريع الفنية وتبادل اللغة مع الأطفال",
+        volunteerPhase2Item2: "تصوير وترويج المنتجات الحرفية عبر الفيديوهات",
+        volunteerPhase2Item3: "المشاركة في الأنشطة اليومية مثل التنظيف والصيانة"
+        // تمت إزالة قسم تفاصيل المشروع التطوعي بالكامل
+      },
+      en: {
+        headerTitle: "Thailand Trip",
+        heroTitle: "Hussam's Thailand Trip",
+        heroSubtitle: "My Personal Plan 13 April - 12 May",
+        bangkokSectionTitle: "Bangkok",
+        bangkokDates: "📅 April 13 - 15, 2025",
+        bangkokArrival: "✈️ Arrival: April 13, 1:00 PM",
+        bangkokDay1Title: "Day 1 (April 13)",
+        bangkokDay1Text: "Arrival and Initial Exploration",
+        bangkokDay1Item1: "🚖 Check into hotel and rest until the afternoon",
+        bangkokDay1Item2: "🚶‍♂️ Walk around the Siam area and shop at Siam Paragon",
+        bangkokDay1Item3: "🌃 Experience nightlife on Khao San Road",
+        bangkokDay1Accommodation: "Accommodation: Sukhumvit or Siam area",
+        bangkokDay2Title: "Day 2 (April 14)",
+        bangkokDay2Text: "Cultural Landmarks",
+        bangkokDay2Item1: "🏯 Visit the Grand Palace and Wat Phra Kaew",
+        bangkokDay2Item2: "⛩️ Explore Wat Arun",
+        bangkokDay2Item3: "🚤 Boat tour through the canals",
+        bangkokDay2Item4: "🛍️ Visit Chatuchak Market (if on Saturday or Sunday)",
+        bangkokDay2Item5: "🍽️ Dinner at Asiatique The Riverfront",
+        bangkokDay3Title: "Day 3 (April 15)",
+        bangkokDay3Text: "Markets and Local Experience",
+        bangkokDay3Item1: "🛶 Visit Damnoen Saduak Floating Market in the morning",
+        bangkokDay3Item2: "🌆 Visit Maeklong Railway Market",
+        bangkokDay3Item3: "🛍️ Tour the Talad Rot Fai Night Market",
+        bangkokDay3Travel: "🚆 Travel to Ayutthaya by train (1.5 hours) in the evening",
+        
+        ayutthayaSectionTitle: "Ayutthaya",
+        ayutthayaDate: "📅 April 16, 2025",
+        ayutthayaAccommodation: "Accommodation: One night near the historical park",
+        ayutthayaCardTitle: "One Day",
+        ayutthayaItem1: "🚴‍♂️ Explore Ayutthaya Historical Park by bicycle",
+        ayutthayaItem2: "🏯 Visit Wat Mahathat to see Buddha's head entwined in tree roots",
+        ayutthayaItem3: "🏯 Visit Wat Chaiwatthanaram at sunset",
+        ayutthayaItem4: "🚤 Boat tour around temples at sunset",
+        ayutthayaTravel: "🚌 Travel to Sukhothai by bus (6 hours) on the morning of April 17",
+        
+        sukhothaiSectionTitle: "Sukhothai",
+        sukhothaiDate: "📅 April 17-18, 2025",
+        sukhothaiAccommodation: "Accommodation: Near the historical park",
+        sukhothaiDay5Title: "Day 5 (April 17)",
+        sukhothaiDay5Item1: "🚴‍♂️ Bicycle tour of Sukhothai Historical Park",
+        sukhothaiDay5Item2: "🏛️ Visit Wat Si Chum to see the giant Buddha",
+        sukhothaiDay5Item3: "🏯 Explore ancient temples such as Wat Mahathat",
+        sukhothaiDay6Title: "Day 6 (April 18)",
+        sukhothaiDay6Item1: "🚙 Tour nearby villages",
+        sukhothaiDay6Item2: "🍽️ Experience local food at Sukhothai Market",
+        sukhothaiTravel: "✈️ Fly to Chiang Rai from Phitsanulok in the evening",
+        
+        chiangRaiSectionTitle: "Chiang Rai",
+        chiangRaiDate: "📅 April 19-21, 2025",
+        chiangRaiAccommodation: "Accommodation: In the city center",
+        chiangRaiDay7Title: "Day 7 (April 19)",
+        chiangRaiDay7Item1: "🏯 Visit the White Temple (Wat Rong Khun)",
+        chiangRaiDay7Item2: "🔵 Explore the Blue Temple (Wat Rong Suea Ten)",
+        chiangRaiDay7Item3: "🏔️ Tour Mae Fah Luang Art & Culture Park",
+        chiangRaiDay8Title: "Day 8 (April 20)",
+        chiangRaiDay8Item1: "🚙 Trip to the Golden Triangle",
+        chiangRaiDay8Item2: "🍵 Visit tea plantations in Mae Salong",
+        chiangRaiDay8Item3: "🌊 Walk at Khun Korn Waterfall",
+        chiangRaiDay9Title: "Day 9 (April 21)",
+        chiangRaiDay9Item1: "🛍️ Visit Chiang Rai Night Bazaar",
+        chiangRaiDay9Item2: "🏯 Tour Wat Huay Pla Kang",
+        chiangRaiTravel: "🚌 Travel to Pai by bus via Chiang Mai on the morning of April 22",
+        
+        paiSectionTitle: "Pai",
+        paiDate: "📅 April 22-24, 2025",
+        paiAccommodation: "Accommodation: Nature cabins or near Pai River",
+        paiDay10Title: "Day 10 (April 22)",
+        paiDay10Item1: "🌿 Visit Pai hot springs",
+        paiDay10Item2: "🚶‍♂️ Hike Pai Canyon at sunset",
+        paiDay11Title: "Day 11 (April 23)",
+        paiDay11Item1: "🏍️ Motorbike tour of mountain villages",
+        paiDay11Item2: "💦 Visit Mo Paeng Waterfall",
+        paiDay11Item3: "🌅 Enjoy the view at Yun Lai Viewpoint",
+        paiDay12Title: "Day 12 (April 24)",
+        paiDay12Item1: "🏯 Visit Santichon Village (Chinese Temple)",
+        paiDay12Item2: "🚤 Boat ride on the river",
+        paiTravel: "🚌 Bus to Chiang Mai on the morning of April 25 (3 hours)",
+        
+        chiangMaiSectionTitle: "Chiang Mai",
+        chiangMaiDate: "📅 April 25-28, 2025",
+        chiangMaiAccommodation: "Accommodation: In the old town or Nimmanhaemin area",
+        chiangMaiDay13Title: "Day 13 (April 25)",
+        chiangMaiDay13Item1: "🏛️ Visit Wat Phra Singh and Wat Chedi Luang",
+        chiangMaiDay13Item2: "🚶‍♂️ Stroll through the old town and markets",
+        chiangMaiDay14Title: "Day 14 (April 26)",
+        chiangMaiDay14Item1: "🏔️ Visit Wat Phra That Doi Suthep",
+        chiangMaiDay14Item2: "🌲 Walk in Doi Inthanon National Park",
+        chiangMaiDay15Title: "Day 15 (April 27)",
+        chiangMaiDay15Item1: "🐘 Visit Elephant Nature Park",
+        chiangMaiDay15Item2: "🍜 Take a Thai cooking class",
+        chiangMaiDay16Title: "Day 16 (April 28)",
+        chiangMaiDay16Item1: "🛍️ Final shopping tour",
+        chiangMaiDay16Item2: "☕ Experience trendy cafes in Nimmanhaemin",
+        chiangMaiDeparture: "✈️ Departure from Chiang Mai to Bangkok (according to schedule)",
+        
+        relaxationSectionTitle: "Relaxation in Chiang Mai",
+        relaxationDate: "📅 April 29-30, 2025",
+        relaxationDay29Title: "April 29",
+        relaxationDay29Item1: "Relax at a luxurious resort",
+        relaxationDay29Item2: "Visit spa centers and natural treatment facilities",
+        relaxationDay30Title: "April 30",
+        relaxationDay30Item1: "Explore trendy cafes",
+        relaxationDay30Item2: "Stroll in quiet historical areas",
+        relaxationDay30Item3: "Spend time relaxing in gardens",
+        
+        volunteerSectionTitle: "Volunteer Work",
+        volunteerDate: "📅 May 1-12, 2025",
+        volunteerPhase1Title: "Phase One (May 1-6)",
+        volunteerPhase1Item1: "Participate in environmental initiatives and area cleaning",
+        volunteerPhase1Item2: "Support social projects and boost social media",
+        volunteerPhase1Item3: "Workshops in handicrafts and Thai cooking lessons",
+        volunteerPhase2Title: "Phase Two (May 7-12)",
+        volunteerPhase2Item1: "Assist in art projects and language exchange with children",
+        volunteerPhase2Item2: "Photograph and promote handicraft products through videos",
+        volunteerPhase2Item3: "Participate in daily activities like cleaning and maintenance"
+        // Volunteer project details section removed
+      }
+    };
+    
+    // Function to update language
+    function setLanguage(lang) {
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.title = translations[lang]["headerTitle"];
+      document.querySelectorAll("[data-key]").forEach(el => {
+        const key = el.getAttribute("data-key");
+        if(translations[lang][key]) {
+          el.innerHTML = translations[lang][key];
+        }
+      });
+      localStorage.setItem('preferredLanguage', lang);
+    }
+    
+    // Function to toggle theme between dark and light modes
+    function toggleTheme() {
+      if(document.body.classList.contains('light-mode')) {
+        document.body.classList.remove('light-mode');
+        localStorage.setItem('preferredTheme', 'dark');
+      } else {
+        document.body.classList.add('light-mode');
+        localStorage.setItem('preferredTheme', 'light');
+      }
+    }
+    
+    // Load preferred language and theme from Local Storage
+    const preferredLanguage = localStorage.getItem('preferredLanguage') || 'en';
+    const preferredTheme = localStorage.getItem('preferredTheme') || 'dark';
+    if(preferredTheme === 'light') {
+      document.body.classList.add('light-mode');
+    }
+    setLanguage(preferredLanguage);
+    
+    // Back to Top Button functionality
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if(window.scrollY > 300) {
+        backToTop.classList.add('show');
+      } else {
+        backToTop.classList.remove('show');
+      }
+    });
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
